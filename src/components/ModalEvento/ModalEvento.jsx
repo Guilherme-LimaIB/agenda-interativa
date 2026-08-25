@@ -1,6 +1,16 @@
 import { FormEvento } from '../FormEvento/FormEvento'
 
-export function ModalEvento({ isOpen, evento, onSave, onDelete, onClose, readOnly, donoLabel }) {
+export function ModalEvento({
+  isOpen,
+  evento,
+  categorias,
+  onCriarCategoria,
+  onSave,
+  onDelete,
+  onClose,
+  readOnly,
+  donoLabel,
+}) {
   if (!isOpen) return null
 
   return (
@@ -27,7 +37,14 @@ export function ModalEvento({ isOpen, evento, onSave, onDelete, onClose, readOnl
             </button>
           </div>
         ) : (
-          <FormEvento evento={evento} onSubmit={onSave} onCancel={onClose} onDelete={onDelete} />
+          <FormEvento
+            evento={evento}
+            categorias={categorias}
+            onCriarCategoria={onCriarCategoria}
+            onSubmit={onSave}
+            onCancel={onClose}
+            onDelete={onDelete}
+          />
         )}
       </div>
     </div>
