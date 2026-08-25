@@ -36,17 +36,17 @@ function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar, encerrar
 
   return (
     <div className="mx-auto max-w-md p-6">
-      <h2 className="mb-2 text-lg font-semibold text-gray-900">Compartilhar agenda</h2>
-      <p className="mb-6 text-sm text-gray-500">
+      <h2 className="font-display mb-2 text-lg font-bold text-white">Compartilhar agenda</h2>
+      <p className="mb-6 text-sm text-slate-400">
         Gere um código e mande pro seu par, ou digite o código que você recebeu.
       </p>
 
-      <div className="mb-6 rounded-lg border border-gray-200 p-4">
-        <p className="mb-2 text-sm font-medium text-gray-700">Convidar alguém</p>
+      <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <p className="mb-2 text-sm font-medium text-slate-300">Convidar alguém</p>
         <button
           onClick={() => criar.mutate()}
           disabled={criar.isPending}
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
         >
           {criar.isPending ? 'Gerando...' : 'Gerar código de convite'}
         </button>
@@ -54,16 +54,19 @@ function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar, encerrar
         {pendentesCriadosPorMim.length > 0 && (
           <ul className="mt-3 flex flex-col gap-1">
             {pendentesCriadosPorMim.map((p) => (
-              <li key={p.id} className="flex items-center justify-between rounded bg-gray-50 px-3 py-2 text-sm">
+              <li
+                key={p.id}
+                className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm text-slate-200"
+              >
                 <span>
-                  Código: <strong className="tracking-wider">{p.codigo_convite}</strong>
+                  Código: <strong className="tracking-wider text-white">{p.codigo_convite}</strong>
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-amber-600">aguardando aceite</span>
+                  <span className="text-xs text-amber-400">aguardando aceite</span>
                   <button
                     onClick={() => encerrar.mutate(p.id)}
                     disabled={encerrar.isPending}
-                    className="text-xs text-red-600 hover:underline disabled:opacity-50"
+                    className="text-xs text-pink-400 hover:underline disabled:opacity-50"
                   >
                     cancelar
                   </button>
@@ -74,20 +77,20 @@ function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar, encerrar
         )}
       </div>
 
-      <form onSubmit={handleAceitar} className="rounded-lg border border-gray-200 p-4">
-        <label className="mb-2 block text-sm font-medium text-gray-700">Tenho um código</label>
-        {erro && <p className="mb-2 text-sm text-red-600">{erro}</p>}
+      <form onSubmit={handleAceitar} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <label className="mb-2 block text-sm font-medium text-slate-300">Tenho um código</label>
+        {erro && <p className="mb-2 text-sm text-pink-400">{erro}</p>}
         <div className="flex gap-2">
           <input
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
             placeholder="ABC12345"
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 uppercase tracking-wider"
+            className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white uppercase tracking-wider placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
           />
           <button
             type="submit"
             disabled={aceitar.isPending || !codigo}
-            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
           >
             Entrar
           </button>
@@ -95,8 +98,8 @@ function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar, encerrar
       </form>
 
       {parceiros.length > 0 && (
-        <p className="mt-6 text-sm text-gray-500">
-          Compartilhando com: <strong>{parceiros.map((p) => p.email).join(', ')}</strong>
+        <p className="mt-6 text-sm text-slate-400">
+          Compartilhando com: <strong className="text-slate-200">{parceiros.map((p) => p.email).join(', ')}</strong>
         </p>
       )}
     </div>
@@ -149,7 +152,7 @@ export function Compartilhada() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-slate-950">
       <NavBar onNovoEvento={temParceiroAtivo ? () => abrirParaCriar() : undefined} />
 
       {!temParceiroAtivo ? (
@@ -162,7 +165,7 @@ export function Compartilhada() {
         />
       ) : (
         <>
-          <div className="flex flex-wrap items-center gap-4 border-b border-gray-100 px-6 py-2 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-4 border-b border-white/10 bg-white/5 px-6 py-2 text-xs text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CORES.voce }} />
               Você
@@ -174,10 +177,7 @@ export function Compartilhada() {
                 <span key={p.id} className="flex items-center gap-1.5">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CORES.parceiro }} />
                   {email ?? 'Parceiro(a)'}
-                  <button
-                    onClick={() => handleDesconectar(p.id, email)}
-                    className="text-red-500 hover:underline"
-                  >
+                  <button onClick={() => handleDesconectar(p.id, email)} className="text-pink-400 hover:underline">
                     desconectar
                   </button>
                 </span>
@@ -186,7 +186,7 @@ export function Compartilhada() {
           </div>
 
           {isLoading ? (
-            <p className="p-4 text-sm text-gray-500">Carregando agenda compartilhada...</p>
+            <p className="p-4 text-sm text-slate-500">Carregando agenda compartilhada...</p>
           ) : (
             <Calendario
               eventos={eventosExpandidos}

@@ -14,6 +14,9 @@ const toDateInput = (date) => {
   return d.toISOString().slice(0, 10)
 }
 
+const inputClasses =
+  'rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 focus:outline-none'
+
 export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onCancel, onDelete }) {
   const [titulo, setTitulo] = useState(evento?.titulo ?? '')
   const [descricao, setDescricao] = useState(evento?.descricao ?? '')
@@ -76,27 +79,22 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {erro && <p className="text-sm text-pink-400">{erro}</p>}
       {evento?.recorrencia && (
-        <p className="rounded-md bg-blue-50 px-3 py-2 text-xs text-blue-700">
+        <p className="rounded-lg border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-300">
           🔁 Evento recorrente — alterar ou excluir afeta todas as ocorrências.
         </p>
       )}
 
-      <label className="flex flex-col gap-1 text-sm text-gray-700">
+      <label className="flex flex-col gap-1 text-sm text-slate-300">
         Título
-        <input
-          className="rounded-md border border-gray-300 px-3 py-2"
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-          required
-        />
+        <input className={inputClasses} value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm text-gray-700">
+      <label className="flex flex-col gap-1 text-sm text-slate-300">
         Descrição
         <textarea
-          className="rounded-md border border-gray-300 px-3 py-2"
+          className={inputClasses}
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
           rows={2}
@@ -104,21 +102,21 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
       </label>
 
       <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
           Início
           <input
             type="datetime-local"
-            className="rounded-md border border-gray-300 px-3 py-2"
+            className={`${inputClasses} [color-scheme:dark]`}
             value={dataInicio}
             onChange={(e) => setDataInicio(e.target.value)}
             required
           />
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
           Fim
           <input
             type="datetime-local"
-            className="rounded-md border border-gray-300 px-3 py-2"
+            className={`${inputClasses} [color-scheme:dark]`}
             value={dataFim}
             onChange={(e) => setDataFim(e.target.value)}
             required
@@ -127,13 +125,9 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
       </div>
 
       <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
           Repetir
-          <select
-            className="rounded-md border border-gray-300 px-3 py-2"
-            value={repetir}
-            onChange={(e) => setRepetir(e.target.value)}
-          >
+          <select className={inputClasses} value={repetir} onChange={(e) => setRepetir(e.target.value)}>
             <option value="">Não se repete</option>
             <option value="diaria">Diariamente</option>
             <option value="semanal">Semanalmente</option>
@@ -142,11 +136,11 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
           </select>
         </label>
         {repetir && (
-          <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
             Repetir até (opcional)
             <input
               type="date"
-              className="rounded-md border border-gray-300 px-3 py-2"
+              className={`${inputClasses} [color-scheme:dark]`}
               value={repetirAte}
               onChange={(e) => setRepetirAte(e.target.value)}
             />
@@ -154,19 +148,15 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
         )}
       </div>
 
-      <label className="flex flex-col gap-1 text-sm text-gray-700">
+      <label className="flex flex-col gap-1 text-sm text-slate-300">
         Local
-        <input
-          className="rounded-md border border-gray-300 px-3 py-2"
-          value={local}
-          onChange={(e) => setLocal(e.target.value)}
-        />
+        <input className={inputClasses} value={local} onChange={(e) => setLocal(e.target.value)} />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm text-gray-700">
+      <label className="flex flex-col gap-1 text-sm text-slate-300">
         Categoria
         <select
-          className="rounded-md border border-gray-300 px-3 py-2"
+          className={inputClasses}
           value={categoriaId}
           onChange={(e) => handleSelecionarCategoria(e.target.value)}
         >
@@ -181,20 +171,21 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
       </label>
 
       {novaCategoria && (
-        <div className="flex items-end gap-2 rounded-md border border-gray-200 p-2">
-          <label className="flex flex-1 flex-col gap-1 text-xs text-gray-600">
+        <div className="flex items-end gap-2 rounded-lg border border-white/10 bg-white/5 p-2">
+          <label className="flex flex-1 flex-col gap-1 text-xs text-slate-400">
             Nome da categoria
             <input
               autoFocus
-              className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
+              className={`${inputClasses} py-1.5 text-sm`}
               value={novaCategoria.nome}
               onChange={(e) => setNovaCategoria({ ...novaCategoria, nome: e.target.value })}
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs text-gray-600">
+          <label className="flex flex-col gap-1 text-xs text-slate-400">
             Cor
             <input
               type="color"
+              className="h-9 w-9 cursor-pointer rounded-lg border border-white/10 bg-transparent"
               value={novaCategoria.cor}
               onChange={(e) => setNovaCategoria({ ...novaCategoria, cor: e.target.value })}
             />
@@ -202,34 +193,35 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
           <button
             type="button"
             onClick={handleCriarCategoria}
-            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white"
+            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1.5 text-sm font-medium text-white"
           >
             Criar
           </button>
-          <button type="button" onClick={() => setNovaCategoria(null)} className="px-2 py-1.5 text-sm text-gray-500">
+          <button type="button" onClick={() => setNovaCategoria(null)} className="px-2 py-1.5 text-sm text-slate-400">
             Cancelar
           </button>
         </div>
       )}
 
       <div className="flex items-center gap-4">
-        <label className="flex items-center gap-2 text-sm text-gray-700">
+        <label className="flex items-center gap-2 text-sm text-slate-300">
           Cor
-          <input type="color" value={cor} onChange={(e) => setCor(e.target.value)} />
+          <input
+            type="color"
+            value={cor}
+            onChange={(e) => setCor(e.target.value)}
+            className="h-9 w-9 cursor-pointer rounded-lg border border-white/10 bg-transparent"
+          />
         </label>
 
         {repetir ? (
-          <p className="flex-1 text-xs text-gray-500">
+          <p className="flex-1 text-xs text-slate-500">
             Lembrete por email ainda não funciona para eventos recorrentes.
           </p>
         ) : (
-          <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
             Lembrete por email
-            <select
-              className="rounded-md border border-gray-300 px-3 py-2"
-              value={lembrete}
-              onChange={(e) => setLembrete(e.target.value)}
-            >
+            <select className={inputClasses} value={lembrete} onChange={(e) => setLembrete(e.target.value)}>
               <option value="">Nenhum</option>
               <option value="15">15 min antes</option>
               <option value="30">30 min antes</option>
@@ -247,17 +239,20 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
             <button
               type="button"
               onClick={() => onDelete(evento.id)}
-              className="rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+              className="rounded-full px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10"
             >
               Excluir
             </button>
           )}
         </div>
         <div className="flex gap-2">
-          <button type="button" onClick={onCancel} className="rounded-md px-3 py-2 text-sm text-gray-600">
+          <button type="button" onClick={onCancel} className="rounded-full px-3 py-2 text-sm text-slate-400 hover:bg-white/5">
             Cancelar
           </button>
-          <button type="submit" className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white">
+          <button
+            type="submit"
+            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90"
+          >
             Salvar
           </button>
         </div>

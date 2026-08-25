@@ -1,10 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { logout } from '../../services/authService'
 import { useAuth } from '../../hooks/useAuth'
+import { Logo } from '../Logo/Logo'
 
 const linkClasses = ({ isActive }) =>
-  `rounded-md px-3 py-1.5 text-sm font-medium ${
-    isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:text-gray-800'
+  `rounded-full px-3 py-1.5 text-sm font-medium transition ${
+    isActive ? 'bg-indigo-500/20 text-indigo-300' : 'text-slate-400 hover:text-white'
   }`
 
 export function NavBar({ onNovoEvento }) {
@@ -17,13 +18,13 @@ export function NavBar({ onNovoEvento }) {
   }
 
   return (
-    <nav className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
+    <nav className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-white/5 px-6 py-3 backdrop-blur-xl">
       <div className="flex items-center gap-4">
-        <span className="text-lg font-semibold text-gray-900">📅 Nossa Agenda</span>
-        <NavLink to="/" end className={linkClasses}>
+        <Logo />
+        <NavLink to="/app" end className={linkClasses}>
           Minha Agenda
         </NavLink>
-        <NavLink to="/compartilhada" className={linkClasses}>
+        <NavLink to="/app/compartilhada" className={linkClasses}>
           Compartilhada
         </NavLink>
       </div>
@@ -31,13 +32,13 @@ export function NavBar({ onNovoEvento }) {
         {onNovoEvento && (
           <button
             onClick={onNovoEvento}
-            className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90"
           >
             + Novo Evento
           </button>
         )}
-        <span className="text-sm text-gray-500">{user?.email}</span>
-        <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-gray-800">
+        <span className="text-sm text-slate-400">{user?.email}</span>
+        <button onClick={handleLogout} className="text-sm text-slate-400 hover:text-white">
           Sair
         </button>
       </div>

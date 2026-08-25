@@ -52,22 +52,22 @@ export function Dashboard() {
   const handleCriarCategoria = async (dados) => criarCategoria.mutateAsync(dados)
 
   return (
-    <div>
+    <div className="min-h-screen bg-slate-950">
       <NavBar onNovoEvento={() => abrirParaCriar()} />
 
-      {error && <p className="p-4 text-sm text-red-600">Erro ao carregar eventos: {error.message}</p>}
+      {error && <p className="p-4 text-sm text-pink-400">Erro ao carregar eventos: {error.message}</p>}
 
-      <div className="flex flex-wrap items-center gap-3 border-b border-gray-100 px-6 py-2">
+      <div className="flex flex-wrap items-center gap-3 border-b border-white/10 bg-white/5 px-6 py-2">
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar por título..."
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
         />
         <select
           value={categoriaFiltro}
           onChange={(e) => setCategoriaFiltro(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white focus:border-indigo-400 focus:outline-none"
         >
           <option value="">Todas as categorias</option>
           {categorias.map((c) => (
@@ -82,7 +82,7 @@ export function Dashboard() {
               setBusca('')
               setCategoriaFiltro('')
             }}
-            className="text-sm text-gray-500 hover:text-gray-800"
+            className="text-sm text-slate-400 hover:text-white"
           >
             Limpar filtros
           </button>
@@ -91,7 +91,7 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_280px]">
         {isLoading ? (
-          <p className="p-4 text-sm text-gray-500">Carregando eventos...</p>
+          <p className="p-4 text-sm text-slate-500">Carregando eventos...</p>
         ) : (
           <Calendario
             eventos={eventosFiltrados}
@@ -100,7 +100,7 @@ export function Dashboard() {
             getCor={(e) => e.categorias?.cor || e.cor}
           />
         )}
-        <aside className="border-l border-gray-200">
+        <aside className="border-l border-white/10 bg-slate-950">
           <ListaEventos eventos={eventosFiltrados} onClickEvento={handleClickEvento} />
         </aside>
       </div>

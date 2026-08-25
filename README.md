@@ -1,4 +1,4 @@
-# 📅 Agenda Interativa
+# 📅 FlowDaily
 
 Agenda de eventos para uso pessoal (e do casal 💜), com calendário, autenticação e sincronização em tempo real.
 
@@ -29,24 +29,32 @@ VITE_SUPABASE_ANON_KEY=...
 
 ```
 src/
-├── components/   # Calendario, ModalEvento, FormEvento, ListaEventos, NavBar
-├── pages/        # Dashboard, Login, Signup
-├── services/     # supabaseClient, eventoService, authService
-├── hooks/        # useEventos, useAuth, useModalEvento
-├── store/        # eventoStore (Zustand)
-└── context/      # AuthContext
+├── components/   # Calendario, ModalEvento, FormEvento, ListaEventos, NavBar, Logo
+├── pages/        # Landing, Login, Signup, Dashboard, Compartilhada
+├── services/     # supabaseClient, eventoService, authService, categoriaService, lembreteService, parceriaService, perfilService
+├── hooks/        # useEventos, useAuth, useModalEvento, useCategorias, useLembretes, useParcerias, useRealtimeEventos
+└── utils/        # recorrencia (expansão de eventos recorrentes)
 ```
+
+## Rotas
+
+- `/` — Landing page (pública)
+- `/login`, `/signup` — Autenticação (públicas)
+- `/app` — Minha Agenda (protegida)
+- `/app/compartilhada` — Agenda Compartilhada (protegida)
 
 ## Banco de dados
 
-Tabelas `eventos`, `categorias` e `lembretes`, com Row Level Security (cada usuário só vê os próprios dados).
+Tabelas `eventos`, `categorias`, `lembretes`, `parcerias`, `perfis` e `config_privada`, com Row Level Security (cada usuário só vê os próprios dados, ou os do parceiro em parceria ativa).
 
 ## Roadmap
 
 - [x] Setup do projeto + Supabase + schema com RLS
 - [x] Autenticação (login/signup)
 - [x] CRUD de eventos no calendário
-- [ ] Filtro por categoria/cor, busca por título
-- [ ] Lembretes por email
-- [ ] Compartilhar agenda entre os dois usuários
+- [x] Agenda compartilhada (convite por código, tempo real, desconectar)
+- [x] Lembretes por email (Resend + pg_cron + pg_net)
+- [x] Filtro por categoria/cor, busca por título
+- [x] Eventos recorrentes (diária/semanal/mensal/anual)
+- [x] Identidade visual (dark glassmorphism) + landing page
 - [ ] Deploy (Vercel)

@@ -1,11 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap');
 @import 'tailwindcss';
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
-  background-color: #fff;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  background-color: #020617;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-display {
+  font-family: 'Manrope', system-ui, sans-serif;
+}
+
+/* react-big-calendar: overrides pro tema escuro */
+.rbc-calendar {
+  color: #e2e8f0;
+}
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.rbc-header {
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  padding: 10px 0;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.02);
+}
+.rbc-day-bg + .rbc-day-bg,
+.rbc-month-row + .rbc-month-row,
+.rbc-header + .rbc-header,
+.rbc-time-content > * + * > * {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.rbc-off-range-bg {
+  background: rgba(255, 255, 255, 0.02);
+}
+.rbc-off-range {
+  color: #475569;
+}
+.rbc-date-cell {
+  color: #cbd5e1;
+  padding: 4px 8px;
+}
+.rbc-today {
+  background: rgba(99, 102, 241, 0.15);
+}
+.rbc-toolbar button {
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+.rbc-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.rbc-toolbar button.rbc-active {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+}
+.rbc-toolbar button.rbc-active:hover {
+  background: #4f46e5;
+}
+.rbc-toolbar-label {
+  color: white;
+  font-weight: 700;
+}
+.rbc-event {
+  border: none;
+  border-radius: 6px;
+}
+.rbc-show-more {
+  color: #a5b4fc;
+  background: transparent;
+}
+.rbc-agenda-view table.rbc-agenda-table {
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.rbc-agenda-view table.rbc-agenda-table thead > tr > th {
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+}
+.rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.rbc-time-header-content,
+.rbc-time-content {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.rbc-time-slot,
+.rbc-timeslot-group {
+  border-color: rgba(255, 255, 255, 0.06) !important;
 }

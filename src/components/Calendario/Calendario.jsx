@@ -25,7 +25,7 @@ export function Calendario({ eventos, onSelectDate, onClickEvento, getCor }) {
   }))
 
   return (
-    <div className="h-[calc(100vh-64px)] p-4">
+    <div className="h-[calc(100vh-64px)] bg-slate-950 p-4">
       <ReactBigCalendar
         localizer={localizer}
         events={eventosCalendario}
