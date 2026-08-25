@@ -4,8 +4,16 @@ export const useModalEvento = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [evento, setEvento] = useState(null)
 
-  const abrirParaCriar = (slotInfo) => {
-    setEvento(slotInfo ? { data_inicio: slotInfo.start, data_fim: slotInfo.end } : null)
+  const abrirParaCriar = (inicial) => {
+    if (!inicial) {
+      setEvento(null)
+    } else if (inicial.start || inicial.end) {
+      // vindo do calendário (slotInfo do react-big-calendar: {start, end})
+      setEvento({ data_inicio: inicial.start, data_fim: inicial.end })
+    } else {
+      // partial evento já pronto (ex: vindo do "criar por texto")
+      setEvento(inicial)
+    }
     setIsOpen(true)
   }
 

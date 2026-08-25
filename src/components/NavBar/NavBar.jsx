@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { logout } from '../../services/authService'
 import { useAuth } from '../../hooks/useAuth'
@@ -8,13 +9,21 @@ const linkClasses = ({ isActive }) =>
     isActive ? 'bg-indigo-500/20 text-indigo-300' : 'text-slate-400 hover:text-white'
   }`
 
-export function NavBar({ onNovoEvento }) {
+export function NavBar({ onNovoEvento, onCriarPorTexto }) {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [textoRapido, setTextoRapido] = useState('')
 
   const handleLogout = async () => {
     await logout()
     navigate('/login')
+  }
+
+  const handleSubmitTextoRapido = (e) => {
+    e.preventDefault()
+    if (!textoRapido.trim()) return
+    onCriarPorTexto(textoRapido)
+    setTextoRapido('')
   }
 
   return (
@@ -29,6 +38,23 @@ export function NavBar({ onNovoEvento }) {
         </NavLink>
       </div>
       <div className="flex items-center gap-4">
+        {onNovoEvento && onCriarPorTexto && (
+          <form onSubmit={handleSubmitTextoRapido} className="hidden items-center gap-1.5 sm:flex">
+            <input
+              value={textoRapido}
+              onChange={(e) => setTextoRapido(e.target.value)}
+              placeholder="✨ Criar por texto (ex: reunião amanhã 15h)"
+              className="w-64 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={!textoRapido.trim()}
+              className="rounded-full border border-white/10 px-2.5 py-1.5 text-xs text-slate-300 hover:bg-white/10 disabled:opacity-40"
+            >
+              Criar
+            </button>
+          </form>
+        )}
         {onNovoEvento && (
           <button
             onClick={onNovoEvento}

@@ -11,6 +11,7 @@ import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useParcerias } from '../hooks/useParcerias'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
+import { interpretarTexto } from '../utils/linguagemNatural'
 import { expandirOcorrencias } from '../utils/recorrencia'
 
 const CORES = { voce: '#3B82F6', parceiro: '#EC4899' }
@@ -131,6 +132,7 @@ export function Compartilhada() {
 
   const handleCriarCategoria = async (dados) => criarCategoria.mutateAsync(dados)
   const handleExcluirCategoria = async (id) => deletarCategoria.mutateAsync(id)
+  const handleCriarPorTexto = (texto) => abrirParaCriar(interpretarTexto(texto))
 
   const handleSalvar = async (dados, lembreteMinutos) => {
     const eventoSalvo = evento?.id
@@ -155,7 +157,10 @@ export function Compartilhada() {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      <NavBar onNovoEvento={temParceiroAtivo ? () => abrirParaCriar() : undefined} />
+      <NavBar
+        onNovoEvento={temParceiroAtivo ? () => abrirParaCriar() : undefined}
+        onCriarPorTexto={temParceiroAtivo ? handleCriarPorTexto : undefined}
+      />
 
       {!temParceiroAtivo ? (
         <PainelCompartilhamento

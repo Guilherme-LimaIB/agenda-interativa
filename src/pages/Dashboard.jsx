@@ -9,6 +9,7 @@ import { useEventoMutations, useEventos } from '../hooks/useEventos'
 import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
+import { interpretarTexto } from '../utils/linguagemNatural'
 import { expandirOcorrencias } from '../utils/recorrencia'
 
 const JANELA_INICIO = subMonths(new Date(), 3)
@@ -57,10 +58,11 @@ export function Dashboard() {
 
   const handleCriarCategoria = async (dados) => criarCategoria.mutateAsync(dados)
   const handleExcluirCategoria = async (id) => deletarCategoria.mutateAsync(id)
+  const handleCriarPorTexto = (texto) => abrirParaCriar(interpretarTexto(texto))
 
   return (
     <div className="min-h-screen bg-slate-950">
-      <NavBar onNovoEvento={() => abrirParaCriar()} />
+      <NavBar onNovoEvento={() => abrirParaCriar()} onCriarPorTexto={handleCriarPorTexto} />
 
       {error && <p className="p-4 text-sm text-pink-400">Erro ao carregar eventos: {error.message}</p>}
 
