@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { logout } from '../../services/authService'
 import { useAuth } from '../../hooks/useAuth'
+import { usePush } from '../../hooks/usePush'
 import { Logo } from '../Logo/Logo'
 
 const linkClasses = ({ isActive }) =>
@@ -13,6 +14,7 @@ export function NavBar({ onNovoEvento, onCriarPorTexto }) {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [textoRapido, setTextoRapido] = useState('')
+  const { suportado, ativado, carregando, ativar, desativar } = usePush()
 
   const handleLogout = async () => {
     await logout()
@@ -64,6 +66,17 @@ export function NavBar({ onNovoEvento, onCriarPorTexto }) {
             className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90"
           >
             + Novo Evento
+          </button>
+        )}
+        {suportado && !carregando && (
+          <button
+            onClick={ativado ? desativar : ativar}
+            title={ativado ? 'Desativar notificações push' : 'Ativar notificações push'}
+            className={`rounded-full border border-white/10 px-2.5 py-1.5 text-xs hover:bg-white/10 ${
+              ativado ? 'text-indigo-300' : 'text-slate-400'
+            }`}
+          >
+            {ativado ? '🔔 Notificações ativas' : '🔕 Ativar notificações'}
           </button>
         )}
         <span className="text-sm text-slate-400">{user?.email}</span>
