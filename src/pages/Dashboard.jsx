@@ -3,21 +3,22 @@ import { ListaEventos } from '../components/ListaEventos/ListaEventos'
 import { ModalEvento } from '../components/ModalEvento/ModalEvento'
 import { NavBar } from '../components/NavBar/NavBar'
 import { useEventoMutations, useEventos } from '../hooks/useEventos'
+import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
 
 export function Dashboard() {
   const { data: eventos = [], isLoading, error } = useEventos()
   const { criar, atualizar, deletar } = useEventoMutations()
+  const { salvar: salvarLembrete } = useLembreteMutations()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
   useRealtimeEventos()
 
-  const handleSalvar = async (dados) => {
-    if (evento?.id) {
-      await atualizar.mutateAsync({ id: evento.id, dados })
-    } else {
-      await criar.mutateAsync(dados)
-    }
+  const handleSalvar = async (dados, lembreteMinutos) => {
+    const eventoSalvo = evento?.id
+      ? await atualizar.mutateAsync({ id: evento.id, dados })
+      : await criar.mutateAsync(dados)
+    await salvarLembrete.mutateAsync({ eventoId: eventoSalvo.id, minutos: lembreteMinutos })
     fechar()
   }
 

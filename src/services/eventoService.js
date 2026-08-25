@@ -3,7 +3,7 @@ import { supabase } from './supabaseClient'
 export const getEventos = async (usuarioId) => {
   const { data, error } = await supabase
     .from('eventos')
-    .select('*')
+    .select('*, lembretes(*)')
     .eq('usuario_id', usuarioId)
     .order('data_inicio', { ascending: true })
   if (error) throw error
@@ -11,7 +11,10 @@ export const getEventos = async (usuarioId) => {
 }
 
 export const getEventosVisiveis = async () => {
-  const { data, error } = await supabase.from('eventos').select('*').order('data_inicio', { ascending: true })
+  const { data, error } = await supabase
+    .from('eventos')
+    .select('*, lembretes(*)')
+    .order('data_inicio', { ascending: true })
   if (error) throw error
   return data
 }

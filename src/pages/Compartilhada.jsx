@@ -5,6 +5,7 @@ import { NavBar } from '../components/NavBar/NavBar'
 import { useAuth } from '../hooks/useAuth'
 import { useEventoMutations } from '../hooks/useEventos'
 import { useEventosCompartilhados } from '../hooks/useEventosCompartilhados'
+import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useParcerias } from '../hooks/useParcerias'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
@@ -102,6 +103,7 @@ export function Compartilhada() {
   const { parcerias, parceriasAtivas, parceiros, criar, aceitar, encerrar } = useParcerias()
   const { data: eventos = [], isLoading } = useEventosCompartilhados()
   const { criar: criarEvento, atualizar, deletar } = useEventoMutations()
+  const { salvar: salvarLembrete } = useLembreteMutations()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
   useRealtimeEventos()
 
@@ -112,12 +114,11 @@ export function Compartilhada() {
     abrirParaEditar(eventoClicado)
   }
 
-  const handleSalvar = async (dados) => {
-    if (evento?.id) {
-      await atualizar.mutateAsync({ id: evento.id, dados })
-    } else {
-      await criarEvento.mutateAsync(dados)
-    }
+  const handleSalvar = async (dados, lembreteMinutos) => {
+    const eventoSalvo = evento?.id
+      ? await atualizar.mutateAsync({ id: evento.id, dados })
+      : await criarEvento.mutateAsync(dados)
+    await salvarLembrete.mutateAsync({ eventoId: eventoSalvo.id, minutos: lembreteMinutos })
     fechar()
   }
 
