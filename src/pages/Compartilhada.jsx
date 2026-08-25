@@ -1,16 +1,21 @@
-import { useState } from 'react'
+import { addMonths, subMonths } from 'date-fns'
+import { useMemo, useState } from 'react'
 import { Calendario } from '../components/Calendario/Calendario'
 import { ModalEvento } from '../components/ModalEvento/ModalEvento'
 import { NavBar } from '../components/NavBar/NavBar'
 import { useAuth } from '../hooks/useAuth'
+import { useCategorias } from '../hooks/useCategorias'
 import { useEventoMutations } from '../hooks/useEventos'
 import { useEventosCompartilhados } from '../hooks/useEventosCompartilhados'
 import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useParcerias } from '../hooks/useParcerias'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
+import { expandirOcorrencias } from '../utils/recorrencia'
 
 const CORES = { voce: '#3B82F6', parceiro: '#EC4899' }
+const JANELA_INICIO = subMonths(new Date(), 3)
+const JANELA_FIM = addMonths(new Date(), 18)
 
 function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar, encerrar }) {
   const [codigo, setCodigo] = useState('')
@@ -104,15 +109,23 @@ export function Compartilhada() {
   const { data: eventos = [], isLoading } = useEventosCompartilhados()
   const { criar: criarEvento, atualizar, deletar } = useEventoMutations()
   const { salvar: salvarLembrete } = useLembreteMutations()
+  const { categorias, criar: criarCategoria } = useCategorias()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
   useRealtimeEventos()
+
+  const eventosExpandidos = useMemo(
+    () => expandirOcorrencias(eventos, JANELA_INICIO, JANELA_FIM),
+    [eventos],
+  )
 
   const temParceiroAtivo = parceriasAtivas.length > 0
   const eventoEhMeu = evento && evento.usuario_id === user?.id
 
-  const handleClickEvento = (eventoClicado) => {
-    abrirParaEditar(eventoClicado)
+  const handleClickEvento = (ocorrencia) => {
+    abrirParaEditar(ocorrencia._original ?? ocorrencia)
   }
+
+  const handleCriarCategoria = async (dados) => criarCategoria.mutateAsync(dados)
 
   const handleSalvar = async (dados, lembreteMinutos) => {
     const eventoSalvo = evento?.id
@@ -176,7 +189,7 @@ export function Compartilhada() {
             <p className="p-4 text-sm text-gray-500">Carregando agenda compartilhada...</p>
           ) : (
             <Calendario
-              eventos={eventos}
+              eventos={eventosExpandidos}
               onSelectDate={abrirParaCriar}
               onClickEvento={handleClickEvento}
               getCor={(e) => (e.usuario_id === user?.id ? CORES.voce : CORES.parceiro)}
@@ -188,6 +201,8 @@ export function Compartilhada() {
       <ModalEvento
         isOpen={isOpen}
         evento={evento}
+        categorias={categorias}
+        onCriarCategoria={handleCriarCategoria}
         onSave={handleSalvar}
         onDelete={handleDeletar}
         onClose={fechar}

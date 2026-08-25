@@ -16,7 +16,10 @@ export function ListaEventos({ eventos, onClickEvento }) {
             style={{ backgroundColor: evento.categorias?.cor || evento.cor }}
           />
           <div>
-            <p className="text-sm font-medium text-gray-900">{evento.titulo}</p>
+            <p className="text-sm font-medium text-gray-900">
+              {evento.recorrencia && '🔁 '}
+              {evento.titulo}
+            </p>
             <p className="text-xs text-gray-500">
               {new Date(evento.data_inicio).toLocaleString('pt-BR')}
               {evento.local ? ` · ${evento.local}` : ''}

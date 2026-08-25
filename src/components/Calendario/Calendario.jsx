@@ -1,6 +1,7 @@
 import { dateFnsLocalizer, Calendar as ReactBigCalendar } from 'react-big-calendar'
 import { format, getDay, parse, startOfWeek } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useState } from 'react'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 const localizer = dateFnsLocalizer({
@@ -12,6 +13,9 @@ const localizer = dateFnsLocalizer({
 })
 
 export function Calendario({ eventos, onSelectDate, onClickEvento, getCor }) {
+  const [data, setData] = useState(new Date())
+  const [vista, setVista] = useState('month')
+
   const eventosCalendario = eventos.map((evento) => ({
     id: evento.id,
     title: evento.titulo,
@@ -27,6 +31,10 @@ export function Calendario({ eventos, onSelectDate, onClickEvento, getCor }) {
         events={eventosCalendario}
         startAccessor="start"
         endAccessor="end"
+        date={data}
+        onNavigate={setData}
+        view={vista}
+        onView={setVista}
         selectable
         onSelectSlot={onSelectDate}
         onSelectEvent={(event) => onClickEvento(event.resource)}

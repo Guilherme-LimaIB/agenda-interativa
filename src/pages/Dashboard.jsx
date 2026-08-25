@@ -1,3 +1,4 @@
+import { addMonths, subMonths } from 'date-fns'
 import { useMemo, useState } from 'react'
 import { Calendario } from '../components/Calendario/Calendario'
 import { ListaEventos } from '../components/ListaEventos/ListaEventos'
@@ -8,6 +9,10 @@ import { useEventoMutations, useEventos } from '../hooks/useEventos'
 import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
+import { expandirOcorrencias } from '../utils/recorrencia'
+
+const JANELA_INICIO = subMonths(new Date(), 3)
+const JANELA_FIM = addMonths(new Date(), 18)
 
 export function Dashboard() {
   const { data: eventos = [], isLoading, error } = useEventos()
@@ -21,12 +26,15 @@ export function Dashboard() {
   const [categoriaFiltro, setCategoriaFiltro] = useState('')
 
   const eventosFiltrados = useMemo(() => {
-    return eventos.filter((e) => {
+    const filtrados = eventos.filter((e) => {
       const combinaBusca = !busca || e.titulo.toLowerCase().includes(busca.toLowerCase())
       const combinaCategoria = !categoriaFiltro || e.categoria_id === categoriaFiltro
       return combinaBusca && combinaCategoria
     })
+    return expandirOcorrencias(filtrados, JANELA_INICIO, JANELA_FIM)
   }, [eventos, busca, categoriaFiltro])
+
+  const handleClickEvento = (ocorrencia) => abrirParaEditar(ocorrencia._original ?? ocorrencia)
 
   const handleSalvar = async (dados, lembreteMinutos) => {
     const eventoSalvo = evento?.id
@@ -88,12 +96,12 @@ export function Dashboard() {
           <Calendario
             eventos={eventosFiltrados}
             onSelectDate={abrirParaCriar}
-            onClickEvento={abrirParaEditar}
+            onClickEvento={handleClickEvento}
             getCor={(e) => e.categorias?.cor || e.cor}
           />
         )}
         <aside className="border-l border-gray-200">
-          <ListaEventos eventos={eventosFiltrados} onClickEvento={abrirParaEditar} />
+          <ListaEventos eventos={eventosFiltrados} onClickEvento={handleClickEvento} />
         </aside>
       </div>
 

@@ -7,6 +7,13 @@ const toLocalInput = (date) => {
   return d.toISOString().slice(0, 16)
 }
 
+const toDateInput = (date) => {
+  if (!date) return ''
+  const d = new Date(date)
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().slice(0, 10)
+}
+
 export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onCancel, onDelete }) {
   const [titulo, setTitulo] = useState(evento?.titulo ?? '')
   const [descricao, setDescricao] = useState(evento?.descricao ?? '')
@@ -16,6 +23,8 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
   const [cor, setCor] = useState(evento?.cor ?? '#3B82F6')
   const [categoriaId, setCategoriaId] = useState(evento?.categoria_id ?? '')
   const [novaCategoria, setNovaCategoria] = useState(null)
+  const [repetir, setRepetir] = useState(evento?.recorrencia ?? '')
+  const [repetirAte, setRepetirAte] = useState(toDateInput(evento?.recorrencia_ate))
   const [lembrete, setLembrete] = useState(
     evento?.lembretes?.[0]?.tempo_antes_minutos != null
       ? String(evento.lembretes[0].tempo_antes_minutos)
@@ -58,14 +67,21 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
         local,
         cor,
         categoria_id: categoriaId || null,
+        recorrencia: repetir || null,
+        recorrencia_ate: repetir && repetirAte ? new Date(`${repetirAte}T23:59:59`).toISOString() : null,
       },
-      lembrete === '' ? null : Number(lembrete),
+      repetir ? null : lembrete === '' ? null : Number(lembrete),
     )
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       {erro && <p className="text-sm text-red-600">{erro}</p>}
+      {evento?.recorrencia && (
+        <p className="rounded-md bg-blue-50 px-3 py-2 text-xs text-blue-700">
+          🔁 Evento recorrente — alterar ou excluir afeta todas as ocorrências.
+        </p>
+      )}
 
       <label className="flex flex-col gap-1 text-sm text-gray-700">
         Título
@@ -108,6 +124,34 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
             required
           />
         </label>
+      </div>
+
+      <div className="flex gap-3">
+        <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+          Repetir
+          <select
+            className="rounded-md border border-gray-300 px-3 py-2"
+            value={repetir}
+            onChange={(e) => setRepetir(e.target.value)}
+          >
+            <option value="">Não se repete</option>
+            <option value="diaria">Diariamente</option>
+            <option value="semanal">Semanalmente</option>
+            <option value="mensal">Mensalmente</option>
+            <option value="anual">Anualmente</option>
+          </select>
+        </label>
+        {repetir && (
+          <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+            Repetir até (opcional)
+            <input
+              type="date"
+              className="rounded-md border border-gray-300 px-3 py-2"
+              value={repetirAte}
+              onChange={(e) => setRepetirAte(e.target.value)}
+            />
+          </label>
+        )}
       </div>
 
       <label className="flex flex-col gap-1 text-sm text-gray-700">
@@ -174,21 +218,27 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
           <input type="color" value={cor} onChange={(e) => setCor(e.target.value)} />
         </label>
 
-        <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
-          Lembrete por email
-          <select
-            className="rounded-md border border-gray-300 px-3 py-2"
-            value={lembrete}
-            onChange={(e) => setLembrete(e.target.value)}
-          >
-            <option value="">Nenhum</option>
-            <option value="15">15 min antes</option>
-            <option value="30">30 min antes</option>
-            <option value="60">1 hora antes</option>
-            <option value="180">3 horas antes</option>
-            <option value="1440">1 dia antes</option>
-          </select>
-        </label>
+        {repetir ? (
+          <p className="flex-1 text-xs text-gray-500">
+            Lembrete por email ainda não funciona para eventos recorrentes.
+          </p>
+        ) : (
+          <label className="flex flex-1 flex-col gap-1 text-sm text-gray-700">
+            Lembrete por email
+            <select
+              className="rounded-md border border-gray-300 px-3 py-2"
+              value={lembrete}
+              onChange={(e) => setLembrete(e.target.value)}
+            >
+              <option value="">Nenhum</option>
+              <option value="15">15 min antes</option>
+              <option value="30">30 min antes</option>
+              <option value="60">1 hora antes</option>
+              <option value="180">3 horas antes</option>
+              <option value="1440">1 dia antes</option>
+            </select>
+          </label>
+        )}
       </div>
 
       <div className="mt-2 flex justify-between">
