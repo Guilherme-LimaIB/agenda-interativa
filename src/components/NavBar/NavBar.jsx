@@ -36,6 +36,9 @@ export function NavBar({ onNovoEvento, onCriarPorTexto }) {
         <NavLink to="/app/compartilhada" className={linkClasses}>
           Compartilhada
         </NavLink>
+        <NavLink to="/app/tarefas" className={linkClasses}>
+          Tarefas
+        </NavLink>
       </div>
       <div className="flex items-center gap-4">
         {onNovoEvento && onCriarPorTexto && (

@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Landing } from './pages/Landing'
 import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
+import { Tarefas } from './pages/Tarefas'
 
 function TelaCarregando() {
   return (
@@ -69,6 +70,14 @@ function App() {
           element={
             <RotaProtegida>
               <Compartilhada />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/app/tarefas"
+          element={
+            <RotaProtegida>
+              <Tarefas />
             </RotaProtegida>
           }
         />
