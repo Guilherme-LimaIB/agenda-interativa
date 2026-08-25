@@ -9,6 +9,7 @@ import { useEventoMutations, useEventos } from '../hooks/useEventos'
 import { useLembreteMutations } from '../hooks/useLembretes'
 import { useModalEvento } from '../hooks/useModalEvento'
 import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
+import { eventosRestantesHoje, useReorganizarDia } from '../hooks/useReorganizarDia'
 import { interpretarTexto } from '../utils/linguagemNatural'
 import { expandirOcorrencias } from '../utils/recorrencia'
 
@@ -21,6 +22,7 @@ export function Dashboard() {
   const { salvar: salvarLembrete } = useLembreteMutations()
   const { categorias, criar: criarCategoria, deletar: deletarCategoria } = useCategorias()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
+  const { reorganizar } = useReorganizarDia(eventos)
   useRealtimeEventos()
 
   const [busca, setBusca] = useState('')
@@ -60,6 +62,30 @@ export function Dashboard() {
   const handleExcluirCategoria = async (id) => deletarCategoria.mutateAsync(id)
   const handleCriarPorTexto = (texto) => abrirParaCriar(interpretarTexto(texto))
 
+  const temEventosRestantesHoje = eventosRestantesHoje(eventos).length > 0
+
+  const handleAtrasei = async () => {
+    const resposta = window.prompt(
+      'Quantos minutos de atraso? Isso empurra os compromissos restantes de hoje (eventos recorrentes não são afetados).',
+    )
+    if (resposta === null) return
+    const minutos = Number(resposta)
+    if (!Number.isFinite(minutos) || minutos <= 0) {
+      window.alert('Digite um número de minutos maior que zero.')
+      return
+    }
+    try {
+      const quantidade = await reorganizar.mutateAsync(minutos)
+      window.alert(
+        quantidade > 0
+          ? `${quantidade} evento(s) de hoje foram empurrados em ${minutos} min.`
+          : 'Nenhum evento restante hoje pra ajustar.',
+      )
+    } catch (err) {
+      window.alert(err.message || 'Não foi possível ajustar os eventos. Tente novamente.')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-950">
       <NavBar onNovoEvento={() => abrirParaCriar()} onCriarPorTexto={handleCriarPorTexto} />
@@ -94,6 +120,15 @@ export function Dashboard() {
             className="text-sm text-slate-400 hover:text-white"
           >
             Limpar filtros
+          </button>
+        )}
+        {temEventosRestantesHoje && (
+          <button
+            onClick={handleAtrasei}
+            disabled={reorganizar.isPending}
+            className="ml-auto rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10 disabled:opacity-50"
+          >
+            {reorganizar.isPending ? 'Ajustando...' : '⏰ Atrasei'}
           </button>
         )}
       </div>
