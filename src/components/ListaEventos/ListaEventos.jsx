@@ -1,0 +1,26 @@
+export function ListaEventos({ eventos, onClickEvento }) {
+  if (!eventos.length) {
+    return <p className="p-4 text-sm text-gray-500">Nenhum evento por aqui ainda.</p>
+  }
+
+  return (
+    <ul className="divide-y divide-gray-100">
+      {eventos.map((evento) => (
+        <li
+          key={evento.id}
+          onClick={() => onClickEvento(evento)}
+          className="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-50"
+        >
+          <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: evento.cor }} />
+          <div>
+            <p className="text-sm font-medium text-gray-900">{evento.titulo}</p>
+            <p className="text-xs text-gray-500">
+              {new Date(evento.data_inicio).toLocaleString('pt-BR')}
+              {evento.local ? ` · ${evento.local}` : ''}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
