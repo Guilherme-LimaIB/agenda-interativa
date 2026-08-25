@@ -1,5 +1,5 @@
 import { addMonths, subMonths } from 'date-fns'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Calendario } from '../components/Calendario/Calendario'
 import { ListaEventos } from '../components/ListaEventos/ListaEventos'
 import { ModalEvento } from '../components/ModalEvento/ModalEvento'
@@ -18,12 +18,18 @@ export function Dashboard() {
   const { data: eventos = [], isLoading, error } = useEventos()
   const { criar, atualizar, deletar } = useEventoMutations()
   const { salvar: salvarLembrete } = useLembreteMutations()
-  const { categorias, criar: criarCategoria } = useCategorias()
+  const { categorias, criar: criarCategoria, deletar: deletarCategoria } = useCategorias()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
   useRealtimeEventos()
 
   const [busca, setBusca] = useState('')
   const [categoriaFiltro, setCategoriaFiltro] = useState('')
+
+  useEffect(() => {
+    if (categoriaFiltro && !categorias.some((c) => c.id === categoriaFiltro)) {
+      setCategoriaFiltro('')
+    }
+  }, [categorias, categoriaFiltro])
 
   const eventosFiltrados = useMemo(() => {
     const filtrados = eventos.filter((e) => {
@@ -50,6 +56,7 @@ export function Dashboard() {
   }
 
   const handleCriarCategoria = async (dados) => criarCategoria.mutateAsync(dados)
+  const handleExcluirCategoria = async (id) => deletarCategoria.mutateAsync(id)
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -110,6 +117,7 @@ export function Dashboard() {
         evento={evento}
         categorias={categorias}
         onCriarCategoria={handleCriarCategoria}
+        onExcluirCategoria={handleExcluirCategoria}
         onSave={handleSalvar}
         onDelete={handleDeletar}
         onClose={fechar}

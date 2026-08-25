@@ -112,7 +112,7 @@ export function Compartilhada() {
   const { data: eventos = [], isLoading } = useEventosCompartilhados()
   const { criar: criarEvento, atualizar, deletar } = useEventoMutations()
   const { salvar: salvarLembrete } = useLembreteMutations()
-  const { categorias, criar: criarCategoria } = useCategorias()
+  const { categorias, criar: criarCategoria, deletar: deletarCategoria } = useCategorias()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
   useRealtimeEventos()
 
@@ -125,10 +125,12 @@ export function Compartilhada() {
   const eventoEhMeu = evento && evento.usuario_id === user?.id
 
   const handleClickEvento = (ocorrencia) => {
-    abrirParaEditar(ocorrencia._original ?? ocorrencia)
+    const ehMeu = ocorrencia.usuario_id === user?.id
+    abrirParaEditar(ehMeu ? (ocorrencia._original ?? ocorrencia) : ocorrencia)
   }
 
   const handleCriarCategoria = async (dados) => criarCategoria.mutateAsync(dados)
+  const handleExcluirCategoria = async (id) => deletarCategoria.mutateAsync(id)
 
   const handleSalvar = async (dados, lembreteMinutos) => {
     const eventoSalvo = evento?.id
@@ -203,6 +205,7 @@ export function Compartilhada() {
         evento={evento}
         categorias={categorias}
         onCriarCategoria={handleCriarCategoria}
+        onExcluirCategoria={handleExcluirCategoria}
         onSave={handleSalvar}
         onDelete={handleDeletar}
         onClose={fechar}

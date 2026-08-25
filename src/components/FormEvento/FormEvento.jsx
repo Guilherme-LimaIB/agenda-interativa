@@ -17,7 +17,15 @@ const toDateInput = (date) => {
 const inputClasses =
   'rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 focus:outline-none'
 
-export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onCancel, onDelete }) {
+export function FormEvento({
+  evento,
+  categorias,
+  onCriarCategoria,
+  onExcluirCategoria,
+  onSubmit,
+  onCancel,
+  onDelete,
+}) {
   const [titulo, setTitulo] = useState(evento?.titulo ?? '')
   const [descricao, setDescricao] = useState(evento?.descricao ?? '')
   const [dataInicio, setDataInicio] = useState(toLocalInput(evento?.data_inicio))
@@ -34,6 +42,8 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
       : '',
   )
   const [erro, setErro] = useState('')
+  const [salvando, setSalvando] = useState(false)
+  const [excluindo, setExcluindo] = useState(false)
 
   const handleSelecionarCategoria = (valor) => {
     if (valor === '__nova__') {
@@ -45,12 +55,46 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
 
   const handleCriarCategoria = async () => {
     if (!novaCategoria.nome.trim()) return
-    const criada = await onCriarCategoria(novaCategoria)
-    setCategoriaId(criada.id)
-    setNovaCategoria(null)
+    setErro('')
+    try {
+      const criada = await onCriarCategoria(novaCategoria)
+      setCategoriaId(criada.id)
+      setNovaCategoria(null)
+    } catch (err) {
+      setErro(err.message || 'Não foi possível criar a categoria. Tente novamente.')
+    }
   }
 
-  const handleSubmit = (e) => {
+  const handleExcluirCategoria = async () => {
+    const categoria = categorias?.find((c) => c.id === categoriaId)
+    if (
+      !window.confirm(
+        `Excluir a categoria "${categoria?.nome ?? ''}"? Isso remove a categoria de todos os eventos que a usam (os eventos não são apagados).`,
+      )
+    ) {
+      return
+    }
+    setErro('')
+    try {
+      await onExcluirCategoria(categoriaId)
+      setCategoriaId('')
+    } catch (err) {
+      setErro(err.message || 'Não foi possível excluir a categoria. Tente novamente.')
+    }
+  }
+
+  const handleExcluirEvento = async () => {
+    setErro('')
+    setExcluindo(true)
+    try {
+      await onDelete(evento.id)
+    } catch (err) {
+      setErro(err.message || 'Não foi possível excluir o evento. Tente novamente.')
+      setExcluindo(false)
+    }
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!titulo || !dataInicio || !dataFim) {
       setErro('Preencha título, início e fim.')
@@ -61,20 +105,26 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
       return
     }
     setErro('')
-    onSubmit(
-      {
-        titulo,
-        descricao,
-        data_inicio: new Date(dataInicio).toISOString(),
-        data_fim: new Date(dataFim).toISOString(),
-        local,
-        cor,
-        categoria_id: categoriaId || null,
-        recorrencia: repetir || null,
-        recorrencia_ate: repetir && repetirAte ? new Date(`${repetirAte}T23:59:59`).toISOString() : null,
-      },
-      repetir ? null : lembrete === '' ? null : Number(lembrete),
-    )
+    setSalvando(true)
+    try {
+      await onSubmit(
+        {
+          titulo,
+          descricao,
+          data_inicio: new Date(dataInicio).toISOString(),
+          data_fim: new Date(dataFim).toISOString(),
+          local,
+          cor,
+          categoria_id: categoriaId || null,
+          recorrencia: repetir || null,
+          recorrencia_ate: repetir && repetirAte ? new Date(`${repetirAte}T23:59:59`).toISOString() : null,
+        },
+        repetir ? null : lembrete === '' ? null : Number(lembrete),
+      )
+    } catch (err) {
+      setErro(err.message || 'Não foi possível salvar o evento. Tente novamente.')
+      setSalvando(false)
+    }
   }
 
   return (
@@ -153,22 +203,34 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
         <input className={inputClasses} value={local} onChange={(e) => setLocal(e.target.value)} />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm text-slate-300">
-        Categoria
-        <select
-          className={inputClasses}
-          value={categoriaId}
-          onChange={(e) => handleSelecionarCategoria(e.target.value)}
-        >
-          <option value="">Sem categoria</option>
-          {categorias?.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nome}
-            </option>
-          ))}
-          <option value="__nova__">+ Nova categoria...</option>
-        </select>
-      </label>
+      <div className="flex items-end gap-2">
+        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+          Categoria
+          <select
+            className={inputClasses}
+            value={categoriaId}
+            onChange={(e) => handleSelecionarCategoria(e.target.value)}
+          >
+            <option value="">Sem categoria</option>
+            {categorias?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+            <option value="__nova__">+ Nova categoria...</option>
+          </select>
+        </label>
+        {categoriaId && (
+          <button
+            type="button"
+            onClick={handleExcluirCategoria}
+            title="Excluir categoria"
+            className="rounded-lg border border-white/10 px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10"
+          >
+            🗑
+          </button>
+        )}
+      </div>
 
       {novaCategoria && (
         <div className="flex items-end gap-2 rounded-lg border border-white/10 bg-white/5 p-2">
@@ -238,22 +300,29 @@ export function FormEvento({ evento, categorias, onCriarCategoria, onSubmit, onC
           {evento?.id && (
             <button
               type="button"
-              onClick={() => onDelete(evento.id)}
-              className="rounded-full px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10"
+              onClick={handleExcluirEvento}
+              disabled={excluindo}
+              className="rounded-full px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10 disabled:opacity-50"
             >
-              Excluir
+              {excluindo ? 'Excluindo...' : 'Excluir'}
             </button>
           )}
         </div>
         <div className="flex gap-2">
-          <button type="button" onClick={onCancel} className="rounded-full px-3 py-2 text-sm text-slate-400 hover:bg-white/5">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={salvando}
+            className="rounded-full px-3 py-2 text-sm text-slate-400 hover:bg-white/5 disabled:opacity-50"
+          >
             Cancelar
           </button>
           <button
             type="submit"
-            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90"
+            disabled={salvando}
+            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90 disabled:opacity-50"
           >
-            Salvar
+            {salvando ? 'Salvando...' : 'Salvar'}
           </button>
         </div>
       </div>

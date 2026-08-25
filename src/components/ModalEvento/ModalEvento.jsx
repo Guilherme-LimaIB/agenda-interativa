@@ -5,6 +5,7 @@ export function ModalEvento({
   evento,
   categorias,
   onCriarCategoria,
+  onExcluirCategoria,
   onSave,
   onDelete,
   onClose,
@@ -41,6 +42,7 @@ export function ModalEvento({
             evento={evento}
             categorias={categorias}
             onCriarCategoria={onCriarCategoria}
+            onExcluirCategoria={onExcluirCategoria}
             onSubmit={onSave}
             onCancel={onClose}
             onDelete={onDelete}
