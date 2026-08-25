@@ -10,6 +10,12 @@ export const getEventos = async (usuarioId) => {
   return data
 }
 
+export const getEventosVisiveis = async () => {
+  const { data, error } = await supabase.from('eventos').select('*').order('data_inicio', { ascending: true })
+  if (error) throw error
+  return data
+}
+
 export const createEvento = async (eventoData) => {
   const { data, error } = await supabase.from('eventos').insert(eventoData).select().single()
   if (error) throw error

@@ -4,11 +4,13 @@ import { ModalEvento } from '../components/ModalEvento/ModalEvento'
 import { NavBar } from '../components/NavBar/NavBar'
 import { useEventoMutations, useEventos } from '../hooks/useEventos'
 import { useModalEvento } from '../hooks/useModalEvento'
+import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
 
 export function Dashboard() {
   const { data: eventos = [], isLoading, error } = useEventos()
   const { criar, atualizar, deletar } = useEventoMutations()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
+  useRealtimeEventos()
 
   const handleSalvar = async (dados) => {
     if (evento?.id) {

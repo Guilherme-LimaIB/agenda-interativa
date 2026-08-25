@@ -1,5 +1,6 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
+import { Compartilhada } from './pages/Compartilhada'
 import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
@@ -22,6 +23,14 @@ function App() {
           element={
             <RotaProtegida>
               <Dashboard />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/compartilhada"
+          element={
+            <RotaProtegida>
+              <Compartilhada />
             </RotaProtegida>
           }
         />

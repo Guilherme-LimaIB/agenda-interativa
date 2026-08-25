@@ -11,7 +11,7 @@ const localizer = dateFnsLocalizer({
   locales: { 'pt-BR': ptBR },
 })
 
-export function Calendario({ eventos, onSelectDate, onClickEvento }) {
+export function Calendario({ eventos, onSelectDate, onClickEvento, getCor }) {
   const eventosCalendario = eventos.map((evento) => ({
     id: evento.id,
     title: evento.titulo,
@@ -42,7 +42,7 @@ export function Calendario({ eventos, onSelectDate, onClickEvento }) {
           noEventsInRange: 'Nenhum evento neste período.',
         }}
         eventPropGetter={(event) => ({
-          style: { backgroundColor: event.resource.cor || '#3B82F6' },
+          style: { backgroundColor: getCor ? getCor(event.resource) : event.resource.cor || '#3B82F6' },
         })}
       />
     </div>
