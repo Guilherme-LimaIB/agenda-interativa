@@ -18,6 +18,11 @@ export const aceitarConvite = async (codigo) => {
   return data
 }
 
+export const encerrarParceria = async (id) => {
+  const { error } = await supabase.rpc('encerrar_parceria', { p_id: id })
+  if (error) throw error
+}
+
 export const listarParcerias = async (usuarioId) => {
   const { data, error } = await supabase
     .from('parcerias')

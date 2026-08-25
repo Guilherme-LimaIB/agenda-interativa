@@ -11,7 +11,7 @@ import { useRealtimeEventos } from '../hooks/useRealtimeEventos'
 
 const CORES = { voce: '#3B82F6', parceiro: '#EC4899' }
 
-function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar }) {
+function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar, encerrar }) {
   const [codigo, setCodigo] = useState('')
   const [erro, setErro] = useState('')
 
@@ -52,7 +52,16 @@ function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar }) {
                 <span>
                   Código: <strong className="tracking-wider">{p.codigo_convite}</strong>
                 </span>
-                <span className="text-xs text-amber-600">aguardando aceite</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-amber-600">aguardando aceite</span>
+                  <button
+                    onClick={() => encerrar.mutate(p.id)}
+                    disabled={encerrar.isPending}
+                    className="text-xs text-red-600 hover:underline disabled:opacity-50"
+                  >
+                    cancelar
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -90,7 +99,7 @@ function PainelCompartilhamento({ parcerias, parceiros, criar, aceitar }) {
 
 export function Compartilhada() {
   const { user } = useAuth()
-  const { parcerias, parceriasAtivas, parceiros, criar, aceitar } = useParcerias()
+  const { parcerias, parceriasAtivas, parceiros, criar, aceitar, encerrar } = useParcerias()
   const { data: eventos = [], isLoading } = useEventosCompartilhados()
   const { criar: criarEvento, atualizar, deletar } = useEventoMutations()
   const { isOpen, evento, abrirParaCriar, abrirParaEditar, fechar } = useModalEvento()
@@ -119,23 +128,47 @@ export function Compartilhada() {
 
   const parceiroPorId = (id) => parceiros.find((p) => p.id === id)
 
+  const handleDesconectar = (parceriaId, email) => {
+    if (window.confirm(`Desconectar de ${email ?? 'parceiro(a)'}? Vocês deixam de ver os eventos um do outro.`)) {
+      encerrar.mutate(parceriaId)
+    }
+  }
+
   return (
     <div>
       <NavBar onNovoEvento={temParceiroAtivo ? () => abrirParaCriar() : undefined} />
 
       {!temParceiroAtivo ? (
-        <PainelCompartilhamento parcerias={parcerias} parceiros={parceiros} criar={criar} aceitar={aceitar} />
+        <PainelCompartilhamento
+          parcerias={parcerias}
+          parceiros={parceiros}
+          criar={criar}
+          aceitar={aceitar}
+          encerrar={encerrar}
+        />
       ) : (
         <>
-          <div className="flex items-center gap-4 border-b border-gray-100 px-6 py-2 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-4 border-b border-gray-100 px-6 py-2 text-xs text-gray-500">
             <span className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CORES.voce }} />
               Você
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CORES.parceiro }} />
-              {parceiros.map((p) => p.email).join(', ') || 'Parceiro(a)'}
-            </span>
+            {parceriasAtivas.map((p) => {
+              const idParceiro = p.usuario_a === user?.id ? p.usuario_b : p.usuario_a
+              const email = parceiroPorId(idParceiro)?.email
+              return (
+                <span key={p.id} className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CORES.parceiro }} />
+                  {email ?? 'Parceiro(a)'}
+                  <button
+                    onClick={() => handleDesconectar(p.id, email)}
+                    className="text-red-500 hover:underline"
+                  >
+                    desconectar
+                  </button>
+                </span>
+              )
+            })}
           </div>
 
           {isLoading ? (

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { aceitarConvite, criarConvite, listarParcerias } from '../services/parceriaService'
+import { aceitarConvite, criarConvite, encerrarParceria, listarParcerias } from '../services/parceriaService'
 import { getPerfis } from '../services/perfilService'
 import { supabase } from '../services/supabaseClient'
 import { useAuth } from './useAuth'
@@ -50,6 +50,11 @@ export const useParcerias = () => {
     onSuccess: invalidate,
   })
 
+  const encerrar = useMutation({
+    mutationFn: (id) => encerrarParceria(id),
+    onSuccess: invalidate,
+  })
+
   return {
     parcerias: parceriasQuery.data ?? [],
     parceriasAtivas,
@@ -57,5 +62,6 @@ export const useParcerias = () => {
     isLoading: parceriasQuery.isLoading,
     criar,
     aceitar,
+    encerrar,
   }
 }
