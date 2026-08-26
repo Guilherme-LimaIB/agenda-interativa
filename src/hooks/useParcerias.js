@@ -30,6 +30,7 @@ export const useParcerias = () => {
       .channel('parcerias-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'parcerias' }, () => {
         queryClient.invalidateQueries({ queryKey: ['parcerias', user.id] })
+        queryClient.invalidateQueries({ queryKey: ['eventos-compartilhados'] })
       })
       .subscribe()
 
@@ -38,7 +39,10 @@ export const useParcerias = () => {
     }
   }, [user, queryClient])
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['parcerias', user?.id] })
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ['parcerias', user?.id] })
+    queryClient.invalidateQueries({ queryKey: ['eventos-compartilhados'] })
+  }
 
   const criar = useMutation({
     mutationFn: () => criarConvite(user.id),

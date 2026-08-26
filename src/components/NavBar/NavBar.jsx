@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { logout } from '../../services/authService'
 import { useAuth } from '../../hooks/useAuth'
@@ -14,7 +14,11 @@ export function NavBar({ onNovoEvento, onCriarPorTexto }) {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [textoRapido, setTextoRapido] = useState('')
-  const { suportado, ativado, carregando, ativar, desativar } = usePush()
+  const { suportado, ativado, carregando, erro: erroPush, ativar, desativar } = usePush()
+
+  useEffect(() => {
+    if (erroPush) window.alert(erroPush)
+  }, [erroPush])
 
   const handleLogout = async () => {
     await logout()

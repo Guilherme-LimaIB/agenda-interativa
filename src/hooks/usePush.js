@@ -15,6 +15,7 @@ export const usePush = () => {
     }
     obterInscricaoAtual()
       .then((subscription) => setAtivado(!!subscription))
+      .catch(() => setAtivado(false))
       .finally(() => setCarregando(false))
   }, [])
 
