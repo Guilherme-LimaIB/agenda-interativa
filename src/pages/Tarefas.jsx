@@ -1,5 +1,6 @@
 import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core'
 import { useState } from 'react'
+import { PlanejarComIA } from '../components/PlanejarComIA/PlanejarComIA'
 import { NavBar } from '../components/NavBar/NavBar'
 import { Button } from '../components/ui/Button'
 import { useTarefas } from '../hooks/useTarefas'
@@ -133,6 +134,10 @@ export function Tarefas() {
         </form>
 
         <ToggleVista vista={vista} setVista={setVista} />
+      </div>
+
+      <div className="px-6 pt-6">
+        <PlanejarComIA />
       </div>
 
       <div className="p-6">

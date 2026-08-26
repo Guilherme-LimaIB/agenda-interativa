@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/Logo/Logo'
 import { Button } from '../components/ui/Button'
 import { ErrorState } from '../components/ui/ErrorState'
+import { SuccessState } from '../components/ui/SuccessState'
 import { signup } from '../services/authService'
 
 export function Signup() {
@@ -39,7 +40,9 @@ export function Signup() {
         </Link>
         <h1 className="fd-heading-lg mb-4">Criar conta</h1>
         {erro && <ErrorState message={erro} className="mb-4" />}
-        {sucesso && <p className="fd-ui mb-4 text-signal">Confira seu email para confirmar a conta.</p>}
+        {sucesso && (
+          <SuccessState message="Conta criada. Confira seu email para confirmar antes de entrar." className="mb-4" />
+        )}
         <div className="mb-4">
           <label className="fd-ui mb-1 block text-muted">Email</label>
           <input
