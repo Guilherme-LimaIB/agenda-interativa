@@ -1,17 +1,16 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { Compartilhada } from './pages/Compartilhada'
-import { Dashboard } from './pages/Dashboard'
+import { Hoje } from './pages/Hoje'
 import { Landing } from './pages/Landing'
 import { Login } from './pages/Login'
+import { MinhaAgenda } from './pages/MinhaAgenda'
 import { Signup } from './pages/Signup'
 import { Tarefas } from './pages/Tarefas'
 
 function TelaCarregando() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-400">
-      Carregando...
-    </div>
+    <div className="fd-meta flex min-h-screen items-center justify-center bg-paper text-muted">Carregando...</div>
   )
 }
 
@@ -41,6 +40,7 @@ function App() {
             </RotaPublica>
           }
         />
+        <Route path="/sobre" element={<Landing />} />
         <Route
           path="/login"
           element={
@@ -61,7 +61,15 @@ function App() {
           path="/app"
           element={
             <RotaProtegida>
-              <Dashboard />
+              <Hoje />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/app/calendario"
+          element={
+            <RotaProtegida>
+              <MinhaAgenda />
             </RotaProtegida>
           }
         />

@@ -1,22 +1,23 @@
 import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core'
 import { useState } from 'react'
 import { NavBar } from '../components/NavBar/NavBar'
+import { Button } from '../components/ui/Button'
 import { useTarefas } from '../hooks/useTarefas'
 
 const QUADRANTES = [
-  { id: 'fazer', urgente: true, importante: true, titulo: '🔥 Fazer Primeiro', dica: 'Urgente e importante' },
-  { id: 'agendar', urgente: false, importante: true, titulo: '🗓️ Agendar', dica: 'Importante, não urgente' },
-  { id: 'delegar', urgente: true, importante: false, titulo: '🤝 Delegar', dica: 'Urgente, não importante' },
-  { id: 'eliminar', urgente: false, importante: false, titulo: '🗑️ Eliminar', dica: 'Nem urgente, nem importante' },
+  { id: 'fazer', urgente: true, importante: true, titulo: 'Fazer primeiro', dica: 'Urgente e importante' },
+  { id: 'agendar', urgente: false, importante: true, titulo: 'Agendar', dica: 'Importante, não urgente' },
+  { id: 'delegar', urgente: true, importante: false, titulo: 'Delegar', dica: 'Urgente, não importante' },
+  { id: 'eliminar', urgente: false, importante: false, titulo: 'Eliminar', dica: 'Nem urgente, nem importante' },
 ]
 
 const COLUNAS = [
-  { id: 'a_fazer', titulo: 'A Fazer' },
-  { id: 'em_progresso', titulo: 'Em Progresso' },
+  { id: 'a_fazer', titulo: 'A fazer' },
+  { id: 'em_progresso', titulo: 'Em progresso' },
   { id: 'concluido', titulo: 'Concluído' },
 ]
 
-function TarefaCard({ tarefa, onExcluir }) {
+function TarefaLinha({ tarefa, onExcluir }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: tarefa.id })
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 10 }
@@ -26,7 +27,7 @@ function TarefaCard({ tarefa, onExcluir }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`group flex items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 ${
+      className={`group flex items-center justify-between gap-2 border-b border-line py-2 fd-ui text-ink ${
         isDragging ? 'opacity-40' : ''
       }`}
     >
@@ -35,7 +36,8 @@ function TarefaCard({ tarefa, onExcluir }) {
       </span>
       <button
         onClick={() => onExcluir(tarefa.id)}
-        className="text-slate-500 opacity-0 hover:text-pink-400 group-hover:opacity-100"
+        className="text-muted opacity-0 hover:text-signal group-hover:opacity-100"
+        aria-label="Excluir tarefa"
       >
         ✕
       </button>
@@ -43,21 +45,43 @@ function TarefaCard({ tarefa, onExcluir }) {
   )
 }
 
-function Zona({ id, titulo, dica, tarefas, onExcluir }) {
+function Zona({ id, titulo, dica, tarefas, onExcluir, className = '' }) {
   const { setNodeRef, isOver } = useDroppable({ id })
   return (
     <div
       ref={setNodeRef}
-      className={`flex min-h-[160px] flex-col gap-2 rounded-2xl border p-3 backdrop-blur-xl transition ${
-        isOver ? 'border-indigo-400 bg-indigo-500/10' : 'border-white/10 bg-white/5'
-      }`}
+      className={`flex min-h-[180px] flex-col gap-1 p-4 transition ${isOver ? 'bg-signal-soft/40' : ''} ${className}`}
     >
-      <div>
-        <p className="font-display text-sm font-bold text-white">{titulo}</p>
-        {dica && <p className="text-xs text-slate-500">{dica}</p>}
+      <div className="mb-2 flex items-baseline justify-between">
+        <p className="fd-heading text-ink">{titulo}</p>
+        {dica && <p className="fd-meta text-muted">{dica}</p>}
       </div>
-      {tarefas.map((t) => (
-        <TarefaCard key={t.id} tarefa={t} onExcluir={onExcluir} />
+      {tarefas.length === 0 ? (
+        <p className="fd-meta text-muted">Nenhuma tarefa aqui.</p>
+      ) : (
+        tarefas.map((t) => <TarefaLinha key={t.id} tarefa={t} onExcluir={onExcluir} />)
+      )}
+    </div>
+  )
+}
+
+function ToggleVista({ vista, setVista }) {
+  const opcoes = [
+    { id: 'matriz', label: 'Matriz' },
+    { id: 'kanban', label: 'Kanban' },
+  ]
+  return (
+    <div className="flex gap-5">
+      {opcoes.map((o) => (
+        <button
+          key={o.id}
+          onClick={() => setVista(o.id)}
+          className={`fd-ui border-b-2 pb-1 ${
+            vista === o.id ? 'border-signal text-ink' : 'border-transparent text-muted hover:text-ink'
+          }`}
+        >
+          {o.label}
+        </button>
       ))}
     </div>
   )
@@ -92,46 +116,29 @@ export function Tarefas() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-paper">
       <NavBar />
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-white/5 px-6 py-2">
-        <form onSubmit={handleCriar} className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-6 py-3">
+        <form onSubmit={handleCriar} className="flex min-w-0 flex-1 gap-2 sm:flex-none">
           <input
             value={novoTitulo}
             onChange={(e) => setNovoTitulo(e.target.value)}
             placeholder="Nova tarefa..."
-            className="w-64 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+            className="fd-ui min-w-0 flex-1 border-b border-line bg-transparent px-1 py-1.5 text-ink placeholder:text-muted focus:border-signal focus:outline-none sm:w-64 sm:flex-none"
           />
-          <button
-            type="submit"
-            disabled={!novoTitulo.trim()}
-            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
-          >
+          <Button type="submit" variant="secondary" disabled={!novoTitulo.trim()}>
             Adicionar
-          </button>
+          </Button>
         </form>
 
-        <div className="flex rounded-full border border-white/10 bg-white/5 p-1 text-sm">
-          <button
-            onClick={() => setVista('matriz')}
-            className={`rounded-full px-3 py-1 ${vista === 'matriz' ? 'bg-indigo-500 text-white' : 'text-slate-400'}`}
-          >
-            Matriz
-          </button>
-          <button
-            onClick={() => setVista('kanban')}
-            className={`rounded-full px-3 py-1 ${vista === 'kanban' ? 'bg-indigo-500 text-white' : 'text-slate-400'}`}
-          >
-            Kanban
-          </button>
-        </div>
+        <ToggleVista vista={vista} setVista={setVista} />
       </div>
 
       <div className="p-6">
         <DndContext onDragEnd={handleDragEnd}>
           {vista === 'matriz' ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 divide-y divide-line border border-line sm:grid-cols-2 sm:divide-x">
               {QUADRANTES.map((q) => (
                 <Zona
                   key={q.id}
@@ -144,12 +151,12 @@ export function Tarefas() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-1 divide-y divide-line border border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               {COLUNAS.map((c) => (
                 <Zona
                   key={c.id}
                   id={c.id}
-                  titulo={c.titulo}
+                  titulo={`${c.titulo} · ${tarefas.filter((t) => t.status === c.id).length}`}
                   tarefas={tarefas.filter((t) => t.status === c.id)}
                   onExcluir={(id) => deletar.mutate(id)}
                 />

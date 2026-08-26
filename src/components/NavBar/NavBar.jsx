@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { logout } from '../../services/authService'
 import { useAuth } from '../../hooks/useAuth'
 import { usePush } from '../../hooks/usePush'
 import { Logo } from '../Logo/Logo'
-
-const linkClasses = ({ isActive }) =>
-  `rounded-full px-3 py-1.5 text-sm font-medium transition ${
-    isActive ? 'bg-indigo-500/20 text-indigo-300' : 'text-slate-400 hover:text-white'
-  }`
+import { Button } from '../ui/Button'
+import { NavigationItem } from '../ui/NavigationItem'
 
 export function NavBar({ onNovoEvento, onCriarPorTexto }) {
   const { user } = useAuth()
@@ -33,58 +30,48 @@ export function NavBar({ onNovoEvento, onCriarPorTexto }) {
   }
 
   return (
-    <nav className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-white/5 px-6 py-3 backdrop-blur-xl">
-      <div className="flex items-center gap-4">
+    <nav className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-paper px-6 py-3">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
         <Logo />
-        <NavLink to="/app" end className={linkClasses}>
-          Minha Agenda
-        </NavLink>
-        <NavLink to="/app/compartilhada" className={linkClasses}>
-          Compartilhada
-        </NavLink>
-        <NavLink to="/app/tarefas" className={linkClasses}>
-          Tarefas
-        </NavLink>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <NavigationItem to="/app" end>
+            Hoje
+          </NavigationItem>
+          <NavigationItem to="/app/calendario">Minha Agenda</NavigationItem>
+          <NavigationItem to="/app/compartilhada">Compartilhada</NavigationItem>
+          <NavigationItem to="/app/tarefas">Tarefas</NavigationItem>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        {onNovoEvento && onCriarPorTexto && (
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        {onCriarPorTexto && (
           <form onSubmit={handleSubmitTextoRapido} className="hidden items-center gap-1.5 sm:flex">
             <input
               value={textoRapido}
               onChange={(e) => setTextoRapido(e.target.value)}
-              placeholder="✨ Criar por texto (ex: reunião amanhã 15h)"
-              className="w-64 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+              placeholder="Criar por texto (ex: reunião amanhã 15h)"
+              className="fd-ui w-64 border-b border-line bg-transparent px-1 py-1.5 text-ink placeholder:text-muted focus:border-signal focus:outline-none"
             />
-            <button
-              type="submit"
-              disabled={!textoRapido.trim()}
-              className="rounded-full border border-white/10 px-2.5 py-1.5 text-xs text-slate-300 hover:bg-white/10 disabled:opacity-40"
-            >
+            <Button type="submit" variant="ghost" disabled={!textoRapido.trim()}>
               Criar
-            </button>
+            </Button>
           </form>
         )}
         {onNovoEvento && (
-          <button
-            onClick={onNovoEvento}
-            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90"
-          >
-            + Novo Evento
-          </button>
+          <Button variant="primary" onClick={onNovoEvento}>
+            + Novo evento
+          </Button>
         )}
         {suportado && !carregando && (
           <button
             onClick={ativado ? desativar : ativar}
             title={ativado ? 'Desativar notificações push' : 'Ativar notificações push'}
-            className={`rounded-full border border-white/10 px-2.5 py-1.5 text-xs hover:bg-white/10 ${
-              ativado ? 'text-indigo-300' : 'text-slate-400'
-            }`}
+            className={`fd-meta uppercase ${ativado ? 'text-signal' : 'text-muted hover:text-ink'}`}
           >
-            {ativado ? '🔔 Notificações ativas' : '🔕 Ativar notificações'}
+            {ativado ? 'Notificações ativas' : 'Ativar notificações'}
           </button>
         )}
-        <span className="text-sm text-slate-400">{user?.email}</span>
-        <button onClick={handleLogout} className="text-sm text-slate-400 hover:text-white">
+        <span className="fd-meta text-muted">{user?.email}</span>
+        <button onClick={handleLogout} className="fd-ui text-muted hover:text-ink">
           Sair
         </button>
       </div>

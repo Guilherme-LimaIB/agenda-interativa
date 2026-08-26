@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Button } from '../ui/Button'
+import { ErrorState } from '../ui/ErrorState'
 
 const toLocalInput = (date) => {
   if (!date) return ''
@@ -15,7 +17,7 @@ const toDateInput = (date) => {
 }
 
 const inputClasses =
-  'rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 focus:outline-none'
+  'fd-body border-b border-line bg-transparent px-1 py-2 text-ink placeholder:text-muted focus:border-signal focus:outline-none'
 
 export function FormEvento({
   evento,
@@ -129,19 +131,19 @@ export function FormEvento({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      {erro && <p className="text-sm text-pink-400">{erro}</p>}
+      {erro && <ErrorState message={erro} />}
       {evento?.recorrencia && (
-        <p className="rounded-lg border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-300">
-          🔁 Evento recorrente — alterar ou excluir afeta todas as ocorrências.
+        <p className="fd-meta border border-line bg-signal-soft/30 px-3 py-2 text-ink">
+          Evento recorrente — alterar ou excluir afeta todas as ocorrências.
         </p>
       )}
 
-      <label className="flex flex-col gap-1 text-sm text-slate-300">
+      <label className="fd-ui flex flex-col gap-1 text-muted">
         Título
         <input className={inputClasses} value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm text-slate-300">
+      <label className="fd-ui flex flex-col gap-1 text-muted">
         Descrição
         <textarea
           className={inputClasses}
@@ -152,21 +154,21 @@ export function FormEvento({
       </label>
 
       <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+        <label className="fd-ui flex flex-1 flex-col gap-1 text-muted">
           Início
           <input
             type="datetime-local"
-            className={`${inputClasses} [color-scheme:dark]`}
+            className={inputClasses}
             value={dataInicio}
             onChange={(e) => setDataInicio(e.target.value)}
             required
           />
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+        <label className="fd-ui flex flex-1 flex-col gap-1 text-muted">
           Fim
           <input
             type="datetime-local"
-            className={`${inputClasses} [color-scheme:dark]`}
+            className={inputClasses}
             value={dataFim}
             onChange={(e) => setDataFim(e.target.value)}
             required
@@ -175,7 +177,7 @@ export function FormEvento({
       </div>
 
       <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+        <label className="fd-ui flex flex-1 flex-col gap-1 text-muted">
           Repetir
           <select className={inputClasses} value={repetir} onChange={(e) => setRepetir(e.target.value)}>
             <option value="">Não se repete</option>
@@ -186,11 +188,11 @@ export function FormEvento({
           </select>
         </label>
         {repetir && (
-          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+          <label className="fd-ui flex flex-1 flex-col gap-1 text-muted">
             Repetir até (opcional)
             <input
               type="date"
-              className={`${inputClasses} [color-scheme:dark]`}
+              className={inputClasses}
               value={repetirAte}
               onChange={(e) => setRepetirAte(e.target.value)}
             />
@@ -198,13 +200,13 @@ export function FormEvento({
         )}
       </div>
 
-      <label className="flex flex-col gap-1 text-sm text-slate-300">
+      <label className="fd-ui flex flex-col gap-1 text-muted">
         Local
         <input className={inputClasses} value={local} onChange={(e) => setLocal(e.target.value)} />
       </label>
 
       <div className="flex items-end gap-2">
-        <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+        <label className="fd-ui flex flex-1 flex-col gap-1 text-muted">
           Categoria
           <select
             className={inputClasses}
@@ -224,64 +226,59 @@ export function FormEvento({
           <button
             type="button"
             onClick={handleExcluirCategoria}
-            title="Excluir categoria"
-            className="rounded-lg border border-white/10 px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10"
+            className="fd-ui border-b border-line px-1 py-2 text-signal hover:border-signal"
           >
-            🗑
+            Excluir categoria
           </button>
         )}
       </div>
 
       {novaCategoria && (
-        <div className="flex items-end gap-2 rounded-lg border border-white/10 bg-white/5 p-2">
-          <label className="flex flex-1 flex-col gap-1 text-xs text-slate-400">
+        <div className="flex items-end gap-2 border border-line p-2">
+          <label className="fd-meta flex flex-1 flex-col gap-1 text-muted">
             Nome da categoria
             <input
               autoFocus
-              className={`${inputClasses} py-1.5 text-sm`}
+              className={inputClasses}
               value={novaCategoria.nome}
               onChange={(e) => setNovaCategoria({ ...novaCategoria, nome: e.target.value })}
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs text-slate-400">
+          <label className="fd-meta flex flex-col gap-1 text-muted">
             Cor
             <input
               type="color"
-              className="h-9 w-9 cursor-pointer rounded-lg border border-white/10 bg-transparent"
+              className="h-9 w-9 cursor-pointer border border-line bg-transparent"
               value={novaCategoria.cor}
               onChange={(e) => setNovaCategoria({ ...novaCategoria, cor: e.target.value })}
             />
           </label>
-          <button
-            type="button"
-            onClick={handleCriarCategoria}
-            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1.5 text-sm font-medium text-white"
-          >
+          <Button type="button" variant="primary" onClick={handleCriarCategoria}>
             Criar
-          </button>
-          <button type="button" onClick={() => setNovaCategoria(null)} className="px-2 py-1.5 text-sm text-slate-400">
+          </Button>
+          <button type="button" onClick={() => setNovaCategoria(null)} className="fd-ui px-2 py-1.5 text-muted">
             Cancelar
           </button>
         </div>
       )}
 
       <div className="flex items-center gap-4">
-        <label className="flex items-center gap-2 text-sm text-slate-300">
+        <label className="fd-ui flex items-center gap-2 text-muted">
           Cor
           <input
             type="color"
             value={cor}
             onChange={(e) => setCor(e.target.value)}
-            className="h-9 w-9 cursor-pointer rounded-lg border border-white/10 bg-transparent"
+            className="h-9 w-9 cursor-pointer border border-line bg-transparent"
           />
         </label>
 
         {repetir ? (
-          <p className="flex-1 text-xs text-slate-500">
+          <p className="fd-meta flex-1 text-muted">
             Lembrete por email ainda não funciona para eventos recorrentes.
           </p>
         ) : (
-          <label className="flex flex-1 flex-col gap-1 text-sm text-slate-300">
+          <label className="fd-ui flex flex-1 flex-col gap-1 text-muted">
             Lembrete por email
             <select className={inputClasses} value={lembrete} onChange={(e) => setLembrete(e.target.value)}>
               <option value="">Nenhum</option>
@@ -302,28 +299,19 @@ export function FormEvento({
               type="button"
               onClick={handleExcluirEvento}
               disabled={excluindo}
-              className="rounded-full px-3 py-2 text-sm text-pink-400 hover:bg-pink-500/10 disabled:opacity-50"
+              className="fd-ui text-signal hover:underline disabled:opacity-50"
             >
               {excluindo ? 'Excluindo...' : 'Excluir'}
             </button>
           )}
         </div>
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={salvando}
-            className="rounded-full px-3 py-2 text-sm text-slate-400 hover:bg-white/5 disabled:opacity-50"
-          >
+          <Button type="button" variant="ghost" onClick={onCancel} disabled={salvando}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={salvando}
-            className="rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 hover:opacity-90 disabled:opacity-50"
-          >
+          </Button>
+          <Button type="submit" variant="primary" disabled={salvando}>
             {salvando ? 'Salvando...' : 'Salvar'}
-          </button>
+          </Button>
         </div>
       </div>
     </form>

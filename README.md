@@ -29,19 +29,23 @@ VITE_SUPABASE_ANON_KEY=...
 
 ```
 src/
-├── components/   # Calendario, ModalEvento, FormEvento, ListaEventos, NavBar, Logo
-├── pages/        # Landing, Login, Signup, Dashboard, Compartilhada
-├── services/     # supabaseClient, eventoService, authService, categoriaService, lembreteService, parceriaService, perfilService
-├── hooks/        # useEventos, useAuth, useModalEvento, useCategorias, useLembretes, useParcerias, useRealtimeEventos
-└── utils/        # recorrencia (expansão de eventos recorrentes)
+├── components/
+│   ├── ui/       # Button, Input, Badge, Divider, EmptyState, LoadingState, ErrorState, NavigationItem
+│   └── Calendario, ModalEvento, FormEvento, ListaEventos, NavBar, Logo
+├── pages/        # Landing, Login, Signup, Hoje, MinhaAgenda, Compartilhada, Tarefas
+├── services/     # supabaseClient, eventoService, authService, categoriaService, lembreteService, parceriaService, perfilService, tarefaService, pushService
+├── hooks/        # useEventos, useAuth, useModalEvento, useCategorias, useLembretes, useParcerias, useRealtimeEventos, useTarefas
+└── utils/        # recorrencia (expansão de eventos recorrentes), linguagemNatural (criação por texto livre)
 ```
 
 ## Rotas
 
 - `/` — Landing page (pública)
 - `/login`, `/signup` — Autenticação (públicas)
-- `/app` — Minha Agenda (protegida)
+- `/app` — Hoje (dashboard, protegida) — tela inicial após login
+- `/app/calendario` — Minha Agenda / Calendário (protegida)
 - `/app/compartilhada` — Agenda Compartilhada (protegida)
+- `/app/tarefas` — Tarefas (Matriz Eisenhower + Kanban, protegida)
 
 ## Banco de dados
 

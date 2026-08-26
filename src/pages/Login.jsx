@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/Logo/Logo'
+import { Button } from '../components/ui/Button'
+import { ErrorState } from '../components/ui/ErrorState'
 import { login } from '../services/authService'
 
 export function Login() {
@@ -25,48 +27,38 @@ export function Login() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4">
-      <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-indigo-600/25 blur-[100px]" />
-      <div className="pointer-events-none absolute -right-32 -bottom-32 h-80 w-80 rounded-full bg-pink-600/20 blur-[100px]" />
-
-      <form
-        onSubmit={handleSubmit}
-        className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl"
-      >
-        <Link to="/" className="mb-6 inline-flex">
+    <div className="flex min-h-screen items-center justify-center bg-paper px-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm border border-line bg-surface p-8">
+        <Link to="/" className="mb-8 inline-flex">
           <Logo />
         </Link>
-        {erro && <p className="mb-4 text-sm text-pink-400">{erro}</p>}
+        {erro && <ErrorState message={erro} className="mb-4" />}
         <div className="mb-4">
-          <label className="mb-1 block text-sm text-slate-300">Email</label>
+          <label className="fd-ui mb-1 block text-muted">Email</label>
           <input
             type="email"
             required
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 focus:outline-none"
+            className="fd-body w-full border-b border-line bg-transparent px-1 py-2 text-ink placeholder:text-muted focus:border-signal focus:outline-none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-6">
-          <label className="mb-1 block text-sm text-slate-300">Senha</label>
+          <label className="fd-ui mb-1 block text-muted">Senha</label>
           <input
             type="password"
             required
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 focus:outline-none"
+            className="fd-body w-full border-b border-line bg-transparent px-1 py-2 text-ink placeholder:text-muted focus:border-signal focus:outline-none"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
           />
         </div>
-        <button
-          type="submit"
-          disabled={carregando}
-          className="w-full rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-2.5 font-semibold text-white shadow-lg shadow-indigo-500/30 hover:opacity-90 disabled:opacity-50"
-        >
+        <Button type="submit" variant="primary" disabled={carregando} className="w-full">
           {carregando ? 'Entrando...' : 'Entrar'}
-        </button>
-        <p className="mt-4 text-center text-sm text-slate-400">
+        </Button>
+        <p className="fd-body mt-4 text-center text-muted">
           Não tem conta?{' '}
-          <Link to="/signup" className="font-medium text-indigo-300 hover:text-indigo-200">
+          <Link to="/signup" className="text-signal hover:underline">
             Criar conta
           </Link>
         </p>

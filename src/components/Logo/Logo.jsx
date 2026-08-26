@@ -1,27 +1,30 @@
-export function LogoMark({ size = 32 }) {
+export function LogoMark({ size = 24, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#6366f1" />
-          <stop offset="100%" stopColor="#ec4899" />
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="9" fill="url(#logo-gradient)" />
-      <rect x="7" y="8" width="18" height="17" rx="4" fill="white" fillOpacity="0.18" />
-      <rect x="7" y="8" width="18" height="6" rx="3" fill="white" fillOpacity="0.35" />
-      <circle cx="12.5" cy="19" r="1.6" fill="white" />
-      <circle cx="16.5" cy="19" r="1.6" fill="white" />
-      <circle cx="20.5" cy="19" r="1.6" fill="white" fillOpacity="0.55" />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M 18 10 Q 18 5 25 5 L 76 5 Q 82 5 78.5 10 L 67 24 Q 64 27 60 27 L 32 27 L 32 37 L 60 37 Q 65 37 62 41 L 50 55 Q 47 58 43 58 L 32 58 L 32 90 L 18 90 Z"
+        fill="currentColor"
+      />
+      <path d="M 32 64 L 52 64 Q 57 64 54 68 L 46 78 Q 43 81 39 81 L 32 81 Z" fill="#e53935" />
     </svg>
   )
 }
 
-export function Logo({ className = '', textClassName = 'text-white' }) {
+export function Logo({ className = '', textClassName = 'text-ink', markClassName = '' }) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
-      <LogoMark />
-      <span className={`font-display text-lg font-bold tracking-tight ${textClassName}`}>FlowDaily</span>
-    </div>
+    <span
+      className={`font-display inline-flex items-center gap-2 text-lg font-bold tracking-tight uppercase ${textClassName} ${className}`}
+    >
+      <LogoMark className={markClassName || textClassName} />
+      Flow<span className="text-signal">Daily</span>
+    </span>
   )
 }
